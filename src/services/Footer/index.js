@@ -14,7 +14,7 @@ import typography from "assets/theme/base/typography";
 function Footer({
   company = {
     href: "#",
-    name: "GPS Health",
+    name: "Classes",
   },
 }) {
   const { href, name } = company;
