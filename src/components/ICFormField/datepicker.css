@@ -1,0 +1,15 @@
+.flatpickr-calendar {
+    &.open {
+        z-index: 10000000 !important;
+    }
+}
+
+.flatpickr-input {
+    height: 53px !important;
+    box-sizing: border-box !important;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

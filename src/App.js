@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Otis Admin PRO - v2.0.2
-=========================================================
-
-* Product Page: https://material-ui.com/store/items/otis-admin-pro-material-dashboard-react/
-* Copyright 2024 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState, useEffect, useMemo } from "react";
 
 // react-router components
@@ -21,14 +6,14 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import Icon from "@mui/material/Icon";
+// import Icon from "@mui/material/Icon";
 
 // Otis Admin PRO React components
-import MDBox from "components/MDBox";
+// import MDBox from "components/MDBox";
 
 // Otis Admin PRO React example components
-import Sidenav from "examples/Sidenav";
-import Configurator from "examples/Configurator";
+import Sidenav from "services/Sidenav";
+import Configurator from "services/Configurator";
 
 // Otis Admin PRO React themes
 import theme from "assets/theme";
@@ -47,19 +32,23 @@ import createCache from "@emotion/cache";
 import routes from "routes";
 
 // Otis Admin PRO React contexts
-import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
+import { useMaterialUIController, setMiniSidenav } from "context";
+import { NotificationProvider } from 'context/notificationContext';
+
+// Authentication Functions
+import { isLoginValid } from "functions/auth";
+import ProtectedRoute from "functions/protectedRoute";
 
 // Images
-import brandWhite from "assets/images/logo-ct.png";
-import brandDark from "assets/images/logo-ct-dark.png";
+import brandWhite from "assets/images/logo.webp";
 
 export default function App() {
+  /* eslint-disable no-unused-vars */
   const [controller, dispatch] = useMaterialUIController();
   const {
     miniSidenav,
     direction,
     layout,
-    openConfigurator,
     sidenavColor,
     transparentSidenav,
     whiteSidenav,
@@ -67,6 +56,8 @@ export default function App() {
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [routePath, setRoutePath] = useState('/dashboard');
   const { pathname } = useLocation();
 
   // Cache for the rtl
@@ -77,6 +68,11 @@ export default function App() {
     });
 
     setRtlCache(cacheRtl);
+  }, []);
+
+  useEffect(() => {
+    const loggedIn = isLoginValid();
+    setIsLoggedIn(loggedIn);
   }, []);
 
   // Open sidenav when mouse enter on mini sidenav
@@ -95,9 +91,6 @@ export default function App() {
     }
   };
 
-  // Change the openConfigurator state
-  const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
-
   // Setting the dir attribute for the body element
   useEffect(() => {
     document.body.setAttribute("dir", direction);
@@ -114,85 +107,64 @@ export default function App() {
       if (route.collapse) {
         return getRoutes(route.collapse);
       }
-
       if (route.route) {
-        return <Route exact path={route.route} element={route.component} key={route.key} />;
+        return <Route exact path={route.route} element={<ProtectedRoute>{route.component}</ProtectedRoute>} key={route.key} />;
       }
 
       return null;
     });
 
-  const configsButton = (
-    <MDBox
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      width="3.25rem"
-      height="3.25rem"
-      bgColor="white"
-      shadow="sm"
-      borderRadius="50%"
-      position="fixed"
-      right="2rem"
-      bottom="2rem"
-      zIndex={99}
-      color="dark"
-      sx={{ cursor: "pointer" }}
-      onClick={handleConfiguratorOpen}
-    >
-      <Icon fontSize="small" color="inherit">
-        settings
-      </Icon>
-    </MDBox>
-  );
-
   return direction === "rtl" ? (
     <CacheProvider value={rtlCache}>
       <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
+        <NotificationProvider>
         <CssBaseline />
         {layout === "dashboard" && (
           <>
             <Sidenav
               color={sidenavColor}
-              brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-              brandName="Otis Admin PRO"
+              brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandWhite : brandWhite}
+              brandName="GPS Health"
               routes={routes}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
             />
             <Configurator />
-            {configsButton}
+            {/* {configsButton} */}
           </>
         )}
         {layout === "vr" && <Configurator />}
         <Routes>
           {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/dashboards/analytics" />} />
+          <Route path="*" element={isLoggedIn ? <Navigate to={routePath} /> : <Navigate to="/authentication/sign-in" />} />
         </Routes>
+        </NotificationProvider>
       </ThemeProvider>
     </CacheProvider>
   ) : (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
-      <CssBaseline />
-      {layout === "dashboard" && (
-        <>
-          <Sidenav
-            color={sidenavColor}
-            brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-            brandName="Otis Admin PRO"
-            routes={routes}
-            onMouseEnter={handleOnMouseEnter}
-            onMouseLeave={handleOnMouseLeave}
-          />
-          <Configurator />
-          {configsButton}
-        </>
-      )}
-      {layout === "vr" && <Configurator />}
-      <Routes>
-        {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/dashboards/analytics" />} />
-      </Routes>
+      <NotificationProvider>
+        <CssBaseline />
+        {layout === "dashboard" && (
+          <>
+            <Sidenav
+              color={sidenavColor}
+              brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandWhite : brandWhite}
+              brandName="GPS Health"
+              routes={routes}
+              onMouseEnter={handleOnMouseEnter}
+              onMouseLeave={handleOnMouseLeave}
+            />
+            <Configurator />
+            {/* {configsButton} */}
+          </>
+        )}
+        {layout === "vr" && <Configurator />}
+        <Routes>
+          {getRoutes(routes)}
+          <Route path="*" element={isLoggedIn ? <Navigate to={routePath} /> : <Navigate to="/authentication/sign-in" />} />
+        </Routes>
+      </NotificationProvider>
     </ThemeProvider>
   );
 }
