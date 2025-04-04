@@ -32,14 +32,7 @@ const routes = [
     route: "/teachers",
     icon: <Icon fontSize="medium">school</Icon>,
     component: <Teachers />,
-    collapse: [
-      {
-        name: "Add Teacher",
-        key: "add-teacher",
-        route: "/teachers/add-teacher",
-        component: <AddTeacher />,
-      },
-    ],
+    noCollapse: true,
   },
   {
     type: "collapse",
@@ -64,6 +57,12 @@ const routes = [
     key: "add-subject",
     route: "/subjects/add-subject",
     component: <AddSubject />,
+  },
+  {
+    name: "Add Teacher",
+    key: "add-teacher",
+    route: "/teachers/add-teacher",
+    component: <AddTeacher />,
   }
 ];
 
