@@ -26,30 +26,28 @@ import form from "layouts/teachers/schemas/form";
 import initialValues from "layouts/teachers/schemas/initialValues";
 
 // Authentication Functions
-// import { getLoginData } from "functions/auth";
-// import axiosInstance from 'functions/axiosConfig';
+import { getLoginData } from "functions/auth";
+import axiosInstance from 'functions/axiosConfig';
 
 // Notifications
-// import { useNotification } from 'context/notificationContext';
+import { useNotification } from 'context/notificationContext';
 
 function AddTeacher() {
   /* eslint-disable no-unused-vars */
-  // const { addNotification } = useNotification();
+  const { addNotification } = useNotification();
   const { formId, formField } = form;
-  // const { token } = getLoginData();
+  const { token } = getLoginData();
 
   const submitForm = async (values, actions) => {
 
-    /* const data = {
-      type: values.type,
-      case_description: values.description,
-      guardian_name: values.guardianName,
-      guardian_contact: `07${values.guardianContact}`,
-      guardian_relationship: values.guardianRelationship,
-      ailment: values.ailment,
+    const data = {
+      name: values.teacherName,
+      email: values.email,
+      contactNo: values.contactNo,
+      subjects: values.teachingSubject,
     };
 
-    axiosInstance.post(`/cases/create-step-1`, data , {
+    axiosInstance.post(`/teachers/create`, data , {
       headers: { 
         'Authorization': `Bearer ${token}`
       }
@@ -64,7 +62,7 @@ function AddTeacher() {
     })
     .catch((err) => {
       addNotification(err?.response?.data?.message, 'error');
-    }); */
+    });
 
     actions.setSubmitting(false);
   };

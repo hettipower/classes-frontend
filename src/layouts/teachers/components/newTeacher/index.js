@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 // prop-type is a library for typechecking of props
 import PropTypes from "prop-types";
 
@@ -9,11 +11,17 @@ import MDBox from "components/MDBox";
 
 // Form components
 import FormField from "components/ICFormField";
+import AutocompleteMultipleField from "components/ICFormField/autocompleteMultiple";
+
+// Authentication Functions
+import { getLoginData } from "functions/auth";
+import axiosInstance from 'functions/axiosConfig';
 
 
 function NewTeacher({ formData }) {
   /* eslint-disable no-unused-vars */
-  const { formField, values, errors, touched } = formData;
+  const { token } = getLoginData();
+  const { formField, values, errors, touched, setFieldValue } = formData;
   const { teacherName, email, contactNo, teachingSubject } = formField;
   const { 
     teacherName: teacherNameV, 
@@ -21,6 +29,32 @@ function NewTeacher({ formData }) {
     contactNo: contactNoV, 
     teachingSubject: teachingSubjectV,
   } = values;
+  const [subjects, setSubjects] = useState(false);
+
+  const fetchSubjects = async () => {
+    try {
+      const response = await axiosInstance.get(`/subjects/all`, {
+        headers: { 
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.data.data.length > 0) {
+        // Use Promise.all to await all corporate name fetches
+        const newSubjects = await Promise.all(
+          response.data.data.map(async (item) => ({value: item.subject_id, label: item.subject_name}))
+        );
+  
+        setSubjects(newSubjects);
+      }
+    } catch (error) {
+      // console.log('Error:', error);
+    }
+  }; 
+
+  useEffect(() => {
+    fetchSubjects();
+  }, []);
 
   return (
     <MDBox>
@@ -62,16 +96,20 @@ function NewTeacher({ formData }) {
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
-            <FormField
-              type={teachingSubject.type}
-              label={teachingSubject.label}
-              name={teachingSubject.name}
-              value={teachingSubjectV}
-              placeholder={teachingSubject.placeholder}
-              error={errors.teachingSubject && touched.teachingSubject}
-              success={teachingSubjectV.length > 0 && !errors.teachingSubject}
-            />
+          <Grid item xs={12} sm={12}>
+            {
+              subjects.length > 0 && (
+                <AutocompleteMultipleField
+                  label={teachingSubject.label}
+                  name={teachingSubject.name}
+                  value={teachingSubjectV}
+                  placeholder={teachingSubject.placeholder}
+                  error={errors.teachingSubject && touched.teachingSubject}
+                  options={subjects}
+                  setFieldValue={setFieldValue}
+                />
+              )
+            }
           </Grid>
 
         </Grid>

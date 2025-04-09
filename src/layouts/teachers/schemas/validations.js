@@ -10,7 +10,7 @@ export default Yup.object().shape({
   [contactNo.name]: Yup.string()
     .required(contactNo.errorMsg)
     .matches(/^[0-9]+$/, "Only numeric values are allowed")
-    .min(8, "Contact number must be at least 10 digits")
-    .max(8, "Contact number must not exceed 10 digits"),
+    .min(10, "Contact number must be at least 10 digits")
+    .max(10, "Contact number must not exceed 10 digits"),
   [email.name]: Yup.string().required(email.errorMsg).email(email.invalidMsg),
 });

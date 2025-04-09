@@ -15,7 +15,7 @@ export default {
       invalidMsg: "Email is not valid.",
     },
     contactNo: {
-      name: "phone",
+      name: "contactNo",
       label: "Phone",
       type: "tel",
       errorMsg: "Phone is required.",
