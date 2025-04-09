@@ -47,6 +47,7 @@ function Teachers() {
             teachersName: item.name,
             email: item.email,
             contactNo: item.contactNo,
+            subjects: item.subjects.map(subject => subject.subject_name).join(', '),
             actions: []
           }))
         );

@@ -7,6 +7,7 @@ export default {
     { Header: "Teachers Name", accessor: "teachersName", Cell: ({ value }) => <DefaultCell value={value} />, sortedCol: true },
     { Header: "Email", accessor: "email", Cell: ({ value }) => <DefaultCell value={value} />, sortedCol: true },
     { Header: "Contact No", accessor: "contactNo", Cell: ({ value }) => <DefaultCell value={value} />, sortedCol: true },
+    { Header: "Teaching Subject", accessor: "subjects", Cell: ({ value }) => <DefaultCell value={value} />, sortedCol: true },
     {
       Header: "actions",
       accessor: "actions",
