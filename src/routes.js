@@ -2,6 +2,7 @@ import SignInBasic from "layouts/authentication/sign-in";
 import Dashboard from "layouts/dashboard";
 import Teachers from "layouts/teachers";
 import Classes from "layouts/classes";
+import AddClass from "layouts/classes/add";
 import AddTeacher from "layouts/teachers/add";
 import AddSubject from "layouts/subjects/add";
 import Subjects from "layouts/subjects";
@@ -63,6 +64,12 @@ const routes = [
     key: "add-teacher",
     route: "/teachers/add-teacher",
     component: <AddTeacher />,
+  },
+  {
+    name: "Add Class",
+    key: "add-class",
+    route: "/classes/add-class",
+    component: <AddClass />,
   }
 ];
 
