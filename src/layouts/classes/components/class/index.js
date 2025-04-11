@@ -34,9 +34,10 @@ function NewClass({ formData }) {
   const [subjects, setSubjects] = useState(false);
   const [teachers, setTeachers] = useState(false);
 
-  const fetchSubjects = async () => {
+  const fetchSubjects = async ( teacherID ) => {
     try {
-      const response = await axiosInstance.get(`/subjects/all`, {
+      setSubjects([]); // Clear subjects before fetching new ones
+      const response = await axiosInstance.get(`/teachers/subjects/${teacherID}`, {
         headers: { 
           'Authorization': `Bearer ${token}`
         }
@@ -77,9 +78,13 @@ function NewClass({ formData }) {
   }; 
 
   useEffect(() => {
-    fetchSubjects();
     fetchTeachers();
-  }, []);
+
+    if( values.teacher ) {
+      fetchSubjects(values.teacher);
+    }
+
+  }, [values.teacher]);
 
   return (
     <MDBox>
